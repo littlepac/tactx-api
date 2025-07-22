@@ -18,7 +18,7 @@ dependencies {
 
 tasks.jar {
     manifest {
-        attributes["Main-Class"] = "com.example.ApplicationKt"
+        attributes["Main-Class"] = "org.example.MainKt"
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map { if(it.isDirectory) it else zipTree(it) })
