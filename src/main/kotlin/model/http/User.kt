@@ -1,10 +1,11 @@
-package org.example.model
+package org.example.model.http
+
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class User(
     val userId: String,
     val email: String,
-    val username: String,
+    val userName: String,
     val active: Boolean
 )
