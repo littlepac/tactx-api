@@ -16,7 +16,7 @@ export const login = (credential: string | undefined, onSuccess: () => void) => 
 };
 
 export const getUserState = () => {
-    return fetch('https://localhost:8443/api/user-state', {
+    return fetch('https://localhost:8443/api/user/details', {
         method: 'GET',
         credentials: 'include',
     }).then(response =>
@@ -39,7 +39,7 @@ export const getUserPick = (tradeDate: string): Promise<UserPick> => {
 };
 
 export const getUserDetail = (): Promise<UserDetails> => {
-    return fetch(`https://localhost:8443/api/user`, {
+    return fetch(`https://localhost:8443/api/user/details`, {
         method: 'GET',
         credentials: 'include',
     }).then(response => response.json()).then((((payload: UserDetails) => payload)));

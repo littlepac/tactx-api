@@ -36,10 +36,11 @@ class UserSessionRepositoryDbImpl(private val db: Database) : UserSessionReposit
         }
     }
 
-    override suspend fun getUserIdBySessionToken(sessionToken: String): String? {
-        return UserSessionTable.select { UserSessionTable.currentToken eq sessionToken }
-            .map { it[UserSessionTable.userId].toString() }
-            .singleOrNull()
-    }
+    override suspend fun getUserIdBySessionToken(sessionToken: String): String? =
+        newSuspendedTransaction(db = db) {
+            UserSessionTable.select { UserSessionTable.currentToken eq sessionToken }
+                .map { it[UserSessionTable.userId].toString() }
+                .singleOrNull()
+        }
 
 }

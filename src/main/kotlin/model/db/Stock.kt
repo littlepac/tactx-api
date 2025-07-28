@@ -7,5 +7,5 @@ data class Stock(
     val ticker: String,
     val previousOpen: BigDecimal,
     val previousClose: BigDecimal,
-    val reasonForSelection: String,
+    val pickReason: String,
 )

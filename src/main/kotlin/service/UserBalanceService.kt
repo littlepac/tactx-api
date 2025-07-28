@@ -8,13 +8,13 @@ class UserBalanceService(
     private val userBalanceRepository: UserBalanceRepository,
     private val currentDateService: CurrentDateService
 ) {
-    private val DEFAULT_BALANCE : BigDecimal =  BigDecimal("100");
+    private val defaultBalance : BigDecimal =  BigDecimal("100");
 
     suspend fun getUserBalance(userId: String): UserBalance {
         return userBalanceRepository.getCurrentBalance(userId)
     }
 
     suspend fun initUserBalance(userId: String) {
-        userBalanceRepository.initBalance(userId, currentDateService.getCurrentDate(), DEFAULT_BALANCE)
+        userBalanceRepository.initBalance(userId, currentDateService.getCurrentDate(), defaultBalance)
     }
 }
