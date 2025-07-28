@@ -1,5 +1,6 @@
 
 export interface Stock {
+    id: number,
     ticker: string,
     previousDayMove: number,
     reasonForSelection: string,
@@ -8,10 +9,6 @@ export interface Stock {
 export interface DayStocksView {
     stocks: [Stock],
     tradeDate: string
-}
-
-export interface UserPick {
-    pick: number | null
 }
 
 export interface UserDetails {

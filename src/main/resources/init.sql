@@ -90,8 +90,8 @@ CREATE TABLE user_balance (
     FOREIGN KEY (for_trade_date) REFERENCES trading_sessions(trade_date)
 );
 
-INSERT INTO trading_sessions (trade_date, active) values ('2025-07-28', true);
-INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-28', 0, 'NVDA', 1, 2, 'The best stock');
-INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-28', 1, 'TSLA', 1, 2, 'The 2nd best stock');
-INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-28', 2, 'AAPL', 1, 2, 'The 3rd best stock');
-INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-28', 3, 'GOOG', 1, 2, 'The 4th best stock');
+INSERT INTO trading_sessions (trade_date, active) values ('2025-07-29', true);
+INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 0, 'NVDA', 1, 2, 'The best stock');
+INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 1, 'TSLA', 1, 2, 'The 2nd best stock');
+INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 2, 'AAPL', 1, 2, 'The 3rd best stock');
+INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 3, 'GOOG', 1, 2, 'The 4th best stock');

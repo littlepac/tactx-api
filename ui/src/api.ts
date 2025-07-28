@@ -1,4 +1,4 @@
-import {DayStocksView, UserDetails, UserPick} from "./models";
+import {DayStocksView, UserDetails} from "./models";
 
 export const login = (credential: string | undefined, onSuccess: () => void) => {
     fetch('https://localhost:8443/api/auth/google', {
@@ -31,11 +31,17 @@ export const getMainView = () : Promise<DayStocksView> => {
         response.json()).then(((payload: DayStocksView) => payload))
 };
 
-export const getUserPick = (tradeDate: string): Promise<UserPick> => {
+export const getUserPick = (tradeDate: string): Promise<number | null> => {
     return fetch(`https://localhost:8443/api/pick/${tradeDate}`, {
         method: 'GET',
         credentials: 'include',
-    }).then(response => response.json()).then((((payload: UserPick) => payload)));
+    }).then((response) => response?.text())
+        .then((text) => {
+            if (text) {
+                return Number(text);
+            }
+            return null;
+        });
 };
 
 export const getUserDetail = (): Promise<UserDetails> => {
@@ -43,4 +49,30 @@ export const getUserDetail = (): Promise<UserDetails> => {
         method: 'GET',
         credentials: 'include',
     }).then(response => response.json()).then((((payload: UserDetails) => payload)));
+};
+
+export const setPick = (tradeDate: string, pickId: number): Promise<number | null> => {
+    return fetch(`https://localhost:8443/api/pick/${tradeDate}/${pickId}`, {
+        method: 'PUT',
+        credentials: 'include',
+    }).then((response) => response.text())
+        .then((text) => {
+            if (text) {
+                return Number(text);
+            }
+            return null;
+        });
+};
+
+export const removePick = (tradeDate: string): Promise<number | null> => {
+    return fetch(`https://localhost:8443/api/pick/${tradeDate}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    }).then(response => response.json()).then((response) => response?.text())
+        .then((text) => {
+            if (text) {
+                return Number(text);
+            }
+            return null;
+        });
 };
