@@ -3,6 +3,7 @@ package org.example.repository
 import org.example.model.db.UserBalance
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.select
@@ -33,10 +34,10 @@ class UserBalanceRepositoryDbImpl(private val db: Database) : UserBalanceReposit
         }
     }
 
-    override suspend fun getCurrentBalance(userId: String): UserBalance = newSuspendedTransaction(db = db) {
+    override suspend fun getCurrentBalance(userId: String, tradeDate: LocalDate): UserBalance = newSuspendedTransaction(db = db) {
         val uuidUserId = UUID.fromString(userId)
         newSuspendedTransaction(db = db) {
-            UserBalanceTable.select { UserBalanceTable.userId eq uuidUserId }.map {
+            UserBalanceTable.select { (UserBalanceTable.userId eq uuidUserId) and (UserBalanceTable.forTradeDate eq tradeDate)}.map {
                 UserBalance(
                     it[UserBalanceTable.forTradeDate],
                     it[UserBalanceTable.balance]

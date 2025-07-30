@@ -2,6 +2,8 @@ package org.example
 
 import org.example.repository.PickRepository
 import org.example.repository.PickRepositoryDbImpl
+import org.example.repository.TradingSessionRepository
+import org.example.repository.TradingSessionRepositoryDbImpl
 import org.example.repository.UserBalanceRepository
 import org.example.repository.UserBalanceRepositoryDbImpl
 import org.example.repository.UserPickRepository
@@ -10,7 +12,6 @@ import org.example.repository.UserSessionRepository
 import org.example.repository.UserSessionRepositoryDbImpl
 import org.example.repository.UserRepository
 import org.example.repository.UserRepositoryDbImpl
-import org.example.service.CurrentDateService
 import org.example.service.StockService
 import org.example.service.UserBalanceService
 import org.example.service.UserPickService
@@ -33,11 +34,11 @@ val appModule = module {
     single<UserPickRepository> { UserPickRepositoryDbImpl(get()) }
     single<PickRepository> { PickRepositoryDbImpl(get()) }
     single<UserBalanceRepository> { UserBalanceRepositoryDbImpl(get()) }
+    single<TradingSessionRepository> { TradingSessionRepositoryDbImpl(get()) }
     single { UserService(get(), get()) }
     single { UserSessionService(get(), get()) }
     single { StockService(get(), get()) }
     single { UserPickService(get()) }
-    single { CurrentDateService() }
     single { UserBalanceService(get(),get()) }
 
 }

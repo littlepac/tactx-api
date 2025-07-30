@@ -6,5 +6,5 @@ import java.time.LocalDate
 
 interface UserBalanceRepository {
     suspend fun initBalance(userId: String, forTradingDate: LocalDate, balance: BigDecimal)
-    suspend fun getCurrentBalance(userId: String) : UserBalance
+    suspend fun getCurrentBalance(userId: String, tradeDate: LocalDate) : UserBalance
 }

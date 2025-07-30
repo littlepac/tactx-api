@@ -26,7 +26,8 @@ CREATE TABLE user_sessions (
 
 CREATE TABLE trading_sessions (
     trade_date DATE PRIMARY KEY,
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL,
+    tradeable BOOLEAN NOT NULL
 );
 
 CREATE TABLE leaderboards (
@@ -85,12 +86,12 @@ CREATE TABLE user_balance (
     user_id UUID NOT NULL,
     for_trade_date DATE NOT NULL,
     balance NUMERIC(15,4) NOT NULL,
-    PRIMARY KEY (user_id),
+    PRIMARY KEY (user_id, for_trade_date),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (for_trade_date) REFERENCES trading_sessions(trade_date)
 );
 
-INSERT INTO trading_sessions (trade_date, active) values ('2025-07-29', true);
+INSERT INTO trading_sessions (trade_date, active, tradeable) values ('2025-07-29', true, true);
 INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 0, 'NVDA', 1, 2, 'The best stock');
 INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 1, 'TSLA', 1, 2, 'The 2nd best stock');
 INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 2, 'AAPL', 1, 2, 'The 3rd best stock');

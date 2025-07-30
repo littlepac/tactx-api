@@ -17,7 +17,6 @@ import org.example.model.http.UserDetails
 import org.example.service.StockService
 import org.example.service.UserBalanceService
 import org.example.service.UserPickService
-import org.example.service.UserService
 import org.example.service.UserSessionService
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
@@ -83,7 +82,6 @@ fun Application.module() {
         val userBalanceService by inject<UserBalanceService>()
         val userPickService by inject<UserPickService>()
         val stockService by inject<StockService>()
-        val userService by inject<UserService>()
 
         route("/api") {
 
@@ -91,7 +89,7 @@ fun Application.module() {
                 val sessionToken = call.request.cookies["hundred_bucks_session"]
                 val user = sessionToken?.let {
                     userSessionService.getUserBySession(sessionToken)
-                } ?: userService.getUserByEmail("tkpc071083@gmail.com")
+                }
                 if (user != null) {
                     followup(call, user);
                 } else {

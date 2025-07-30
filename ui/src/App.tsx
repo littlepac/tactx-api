@@ -39,6 +39,7 @@ const App = () => {
         return <div>
             {"TradeDate: " + tradeDate}
             {"UserDetails: " + JSON.stringify(userDetails)}
+            {"Tradeable: " + mainView.tradeable}
             {
                 mainView.stocks.map(
                     it =>

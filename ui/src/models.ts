@@ -9,6 +9,7 @@ export interface Stock {
 export interface DayStocksView {
     stocks: [Stock],
     tradeDate: string
+    tradeable: boolean
 }
 
 export interface UserDetails {
