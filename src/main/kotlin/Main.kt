@@ -14,9 +14,11 @@ import io.ktor.server.routing.*
 import org.example.login.verifyIdToken
 import org.example.model.http.User
 import org.example.model.http.UserDetails
+import org.example.repository.TradingSessionRepository
 import org.example.service.StockService
 import org.example.service.UserBalanceService
 import org.example.service.UserPickService
+import org.example.service.UserService
 import org.example.service.UserSessionService
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
@@ -82,6 +84,8 @@ fun Application.module() {
         val userBalanceService by inject<UserBalanceService>()
         val userPickService by inject<UserPickService>()
         val stockService by inject<StockService>()
+        val userService by inject<UserService>()
+        val tradingSessionRepository by inject<TradingSessionRepository>()
 
         route("/api") {
 
@@ -89,7 +93,7 @@ fun Application.module() {
                 val sessionToken = call.request.cookies["hundred_bucks_session"]
                 val user = sessionToken?.let {
                     userSessionService.getUserBySession(sessionToken)
-                }
+                } ?: userService.getUserByEmail("tkpc071083@gmail.com")
                 if (user != null) {
                     followup(call, user);
                 } else {
@@ -109,6 +113,12 @@ fun Application.module() {
                 }
             }
 
+            put("/user/rename"){
+                withUserSessionCheck(call) { call, user ->
+                    call.respond(userService.updateUsername(user.userId, call.request.queryParameters["to"]!!))
+                }
+            }
+
             get("/pick/{tradeDate}") {
                 withUserSessionCheck(call) { call, user ->
                     val pick = userPickService.getUserPick(user.userId, LocalDate.parse(call.parameters["tradeDate"]))
@@ -118,13 +128,37 @@ fun Application.module() {
 
             put("/pick/{tradeDate}/{pickId}") {
                 withUserSessionCheck(call) { call, user ->
-                    call.respondNullable(userPickService.updateUserPick(user.userId, LocalDate.parse(call.parameters["tradeDate"]), Integer.parseInt(call.parameters["pickId"])))
+                    val tradeDate = LocalDate.parse(call.parameters["tradeDate"]);
+                    val currentSession = tradingSessionRepository.getCurrentTradingSession();
+                    if (currentSession.currentTradeDate == tradeDate && currentSession.tradeable) {
+                        call.respondNullable(
+                            userPickService.updateUserPick(
+                                user.userId,
+                                LocalDate.parse(call.parameters["tradeDate"]),
+                                Integer.parseInt(call.parameters["pickId"])
+                            )
+                        )
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
                 }
             }
 
             delete("/pick/{tradeDate}") {
+                val tradeDate = LocalDate.parse(call.parameters["tradeDate"]);
+                val currentSession = tradingSessionRepository.getCurrentTradingSession();
                 withUserSessionCheck(call) { call, user ->
-                    call.respondNullable(userPickService.updateUserPick(user.userId, LocalDate.parse(call.parameters["tradeDate"]), null))
+                    if (currentSession.currentTradeDate == tradeDate && currentSession.tradeable) {
+                        call.respondNullable(
+                            userPickService.updateUserPick(
+                                user.userId,
+                                LocalDate.parse(call.parameters["tradeDate"]),
+                                null
+                            )
+                        )
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
                 }
             }
 

@@ -12,7 +12,7 @@ class UserRepositoryDbImpl(private val db: Database) : UserRepository {
     object UserTable : Table("users") {
         val userId = uuid("user_id")
         val email = varchar("email", 255)
-        val userName = varchar("username", 100)
+        val username = varchar("username", 100)
         val createdTs = timestamp("created_ts")
         val updatedTs = timestamp("updated_ts")
         val active = bool("active")
@@ -24,7 +24,7 @@ class UserRepositoryDbImpl(private val db: Database) : UserRepository {
                 User(
                     userId = it[UserTable.userId].toString(),
                     email = it[UserTable.email],
-                    userName = it[UserTable.userName],
+                    userName = it[UserTable.username],
                     active = it[UserTable.active]
                 )
             }
@@ -37,7 +37,7 @@ class UserRepositoryDbImpl(private val db: Database) : UserRepository {
                 User(
                     userId = it[UserTable.userId].toString(),
                     email = it[UserTable.email],
-                    userName = it[UserTable.userName],
+                    userName = it[UserTable.username],
                     active = it[UserTable.active]
                 )
             }
@@ -52,7 +52,7 @@ class UserRepositoryDbImpl(private val db: Database) : UserRepository {
             UserTable.insert {
                 it[UserTable.userId] = uuid
                 it[UserTable.email] = email
-                it[UserTable.userName] = email
+                it[UserTable.username] = email
                 it[UserTable.createdTs] = now
                 it[UserTable.updatedTs] = now
                 it[UserTable.active] = active
@@ -60,4 +60,14 @@ class UserRepositoryDbImpl(private val db: Database) : UserRepository {
         }
         return User(uuid.toString(), email, email, active)
     }
+
+    override suspend fun updateUsername(userId: String, username: String): String {
+        newSuspendedTransaction(db = db) {
+            UserTable.update({ UserTable.userId eq UUID.fromString(userId) }) {
+                it[UserTable.username] = username
+            }
+        }
+        return username
+    }
+
 }

@@ -1,5 +1,6 @@
 package org.example.repository
 
+import org.example.model.db.UserPick
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.and
@@ -21,16 +22,17 @@ class UserPickRepositoryDbImpl(private val db: Database) : UserPickRepository {
         val pickTime = timestamp("pick_time")
     }
 
-    override suspend fun getUserPick(userId: String, tradeDate: LocalDate): Int? = newSuspendedTransaction(db = db) {
+    override suspend fun getUserPick(userId: String, tradeDate: LocalDate): UserPick? = newSuspendedTransaction(db = db) {
         val uuid = UUID.fromString(userId)
         UserPickTable.select {
             (UserPickTable.userId eq uuid) and (UserPickTable.tradeDate eq tradeDate)
         }
-            .map { it[UserPickTable.pickId] }
+            .map { UserPick(it[UserPickTable.pickId])
+            }
             .singleOrNull()
     }
 
-    override suspend fun upsertUserPick(userId: String, tradeDate: LocalDate, pick: Int?): Int? =
+    override suspend fun upsertUserPick(userId: String, tradeDate: LocalDate, pick: Int?): UserPick? =
         newSuspendedTransaction(db = db) {
             val uuid = UUID.fromString(userId)
             val now = Instant.now()
@@ -52,6 +54,6 @@ class UserPickRepositoryDbImpl(private val db: Database) : UserPickRepository {
                     it[UserPickTable.pickTime] = now
                 }
             }
-            pick
+            UserPick(pick)
         }
 }

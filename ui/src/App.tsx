@@ -1,58 +1,113 @@
-import React, {useEffect, useState} from 'react';
-import './App.css';
-import {GoogleOAuthProvider} from "@react-oauth/google";
-import HomePage from "./HomePage";
-import {getMainView, getUserDetail, getUserPick, getUserState, login, removePick, setPick} from "./api";
-import {DayStocksView, UserDetails} from "./models";
+import React, {useState, useEffect} from 'react';
+import './output.css'
+import { StockGame } from './components/StockGame';
+import { Leaderboard } from './components/Leaderboard';
+import { Login } from './components/Login';
+import {UserSettings} from "./components/UserSettings";
 import Cookies from 'js-cookie';
+import {DayStocksView, Stock, UserPick} from "./models";
+import {getMainView, getUserDetail, getUserPick, login, removePick, setPick, updateUsername} from './api';
+import {GoogleOAuthProvider} from "@react-oauth/google";
 
 const clientId = "636074117081-gfhjtuf0ie9fes2a1tdug4afsumd3j2m.apps.googleusercontent.com";
 
-const App = () => {
-    const cookie = Cookies.get('hundred_bucks_session');
-    const [loading, setLoading] = useState<boolean>(true);
-    const [mainView, setMainView] = useState<DayStocksView | null>(null);
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-    const [userPick, setUserPick] = useState<number | null>(null);
-    useEffect(() => {
-        getMainView()
-            .then(async mainView => {
-                setMainView(mainView);
-                if (cookie) {
-                    await Promise.all([getUserDetail().then(setUserDetails), getUserPick(mainView.tradeDate).then(setUserPick)])
-                }
-                setLoading(false);
-            })
-        ;
-    }, []);
+type View = 'game' | 'leaderboard' | 'login' | 'settings';
 
-    const loggedIn = userDetails !== null;
-
-    const logInOption = <GoogleOAuthProvider clientId={clientId}>
-        <HomePage redirect={(credential) => login(credential, () => setTimeout(() => {
-            window.location.reload()
-        }, 250))}/>
-    </GoogleOAuthProvider>
-
-    if (mainView) {
-        const tradeDate = mainView.tradeDate;
-        return <div>
-            {"TradeDate: " + tradeDate}
-            {"UserDetails: " + JSON.stringify(userDetails)}
-            {"Tradeable: " + mainView.tradeable}
-            {
-                mainView.stocks.map(
-                    it =>
-                        <tr>
-                            <button onClick={() => setPick(tradeDate, it.id).then(setUserPick)}>{(userPick === it.id ? "[Chosen]" : "") + JSON.stringify(it)}</button>
-                        </tr>
-                )
-            }
-            <button onClick={() => removePick(tradeDate).then(setUserPick)}>{(userPick === null ? "[Chosen]" : "") + " Remove pick"}</button>
-            {loggedIn ? null : logInOption}</div>
-    } else {
-        return "nothing to show"
-    }
+interface User {
+    username: string;
+    email: string;
 }
 
-export default App;
+export default function App() {
+    const [currentView, setCurrentView] = useState<View>('game');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [username, setUsername] = useState<string | null>(null);
+    const [balance, setBalance] = useState<number>(100);
+    const [userPick, setUserPick] = useState<UserPick | null>(null);
+    const [mainView, setMainView] = useState<DayStocksView | null>(null);
+    const [loadingView, setLoadingView] = useState<boolean>(true);
+
+    const showGame = () => {
+        setCurrentView('game');
+    };
+
+    const showLeaderboard = () => {
+        setCurrentView('leaderboard');
+    };
+
+    const showLogin = () => {
+        setCurrentView('login');
+    };
+
+    const showSettings = () => {
+        if (isAuthenticated) {
+            setCurrentView('settings');
+        }
+    };
+
+    const handleLogout = () => {
+        Cookies.remove('hundred_bucks_session');
+        setTimeout(() => window.location.reload(), 250);
+    };
+
+    const handleUsernameChange = (newUsername: string) => {
+        if (newUsername) {
+            updateUsername(newUsername).then(setUsername)
+        }
+    };
+    const cookie = Cookies.get('hundred_bucks_session');
+        useEffect(() => {
+            getMainView().then(async mainView => {
+                setMainView(mainView)
+                if (cookie) {
+                    await Promise.all([getUserDetail().then((user) => {
+                        if (user) {
+                            setUsername(user.userName);
+                            setBalance(user.currentAccountBalance)
+                            setIsAuthenticated(true)
+                        }
+                    }), getUserPick(mainView.tradeDate).then(setUserPick)])
+                    setLoadingView(false)
+                } else {
+                    setLoadingView(false)
+                }
+            });
+    }, []);
+
+    return (
+        <>
+            <GoogleOAuthProvider clientId={clientId}>
+                {currentView === 'game' && !loadingView && (
+                    <StockGame
+                        balance={balance}
+                        onShowLeaderboard={showLeaderboard}
+                        onShowSettings={showSettings}
+                        onShowLogin={showLogin}
+                        isAuthenticated={isAuthenticated}
+                        username={username}
+                        mainView={mainView}
+                        userPick={userPick}
+                        onSelectPick={(tradeDate, pickId) => setPick(tradeDate, pickId).then(setUserPick).catch((e) => console.log(e))}
+                        onRemovePick={(tradeDate) => removePick(tradeDate).then(setUserPick).catch((e) => console.log(e))}
+                    />
+                )}
+                {currentView === 'leaderboard' && (
+                    <Leaderboard onBack={showGame}/>
+                )}
+                {currentView === 'login' && (
+                    <Login onGoogleLoginSuccess={token => login(token, () => {
+                        setTimeout(() => window.location.reload(), 250)
+                    })} />
+                )}
+                {currentView === 'settings' && isAuthenticated && username && (
+                    <UserSettings
+                        onBack={showGame}
+                        onLogout={handleLogout}
+                        currentUsername={username}
+                        onUsernameChange={handleUsernameChange}
+                    />
+                )}
+            </GoogleOAuthProvider>
+        </>
+    );
+}

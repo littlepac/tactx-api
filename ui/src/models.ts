@@ -2,7 +2,9 @@
 export interface Stock {
     id: number,
     ticker: string,
-    previousDayMove: number,
+    name: string,
+    previousOpen: number,
+    previousClose: number,
     reasonForSelection: string,
 }
 
@@ -16,4 +18,8 @@ export interface UserDetails {
     userName: string,
     currentAccountBalance: number
     updatedTradeDate: string
+}
+
+export interface UserPick {
+    pickId: number | null
 }

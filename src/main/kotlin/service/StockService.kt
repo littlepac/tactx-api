@@ -3,15 +3,16 @@ package org.example.service
 import org.example.model.http.DayStocksView
 import org.example.model.http.Stock
 import org.example.repository.PickRepository
+import org.example.repository.StockRepository
 import org.example.repository.TradingSessionRepository
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 class StockService(
     private val tradingSessionRepository: TradingSessionRepository,
-    private val pickRepository: PickRepository
+    private val pickRepository: PickRepository,
+    private val stockRepository: StockRepository
 ) {
-
     suspend fun getDayStockView(): DayStocksView {
         val currentSession = tradingSessionRepository.getCurrentTradingSession()
         val date = currentSession.currentTradeDate
@@ -22,9 +23,9 @@ class StockService(
                 Stock(
                     stock.id,
                     stock.ticker,
-                    stock.previousClose
-                        .divide(stock.previousOpen, 4, RoundingMode.HALF_UP)
-                        .minus(BigDecimal.ONE).toDouble(),
+                    stockRepository.getStockNameByTicker(stock.ticker),
+                    stock.previousOpen.toDouble(),
+                    stock.previousClose.toDouble(),
                     stock.pickReason
                 )
             },

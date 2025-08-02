@@ -11,4 +11,8 @@ class UserService(private val userRepository: UserRepository, private val userBa
         userBalanceService.initUserBalance(user.userId)
         return user
     }
+
+    suspend fun updateUsername(userId: String, username: String): String {
+        return userRepository.updateUsername(userId, username)
+    }
 }
