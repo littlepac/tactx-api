@@ -12,7 +12,7 @@ COPY src src
 
 RUN chmod +x ./gradlew
 RUN ./gradlew clean jar --no-daemon
-COPY build/libs/*.jar app.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 
 # Expose port 8080
 EXPOSE 8080
