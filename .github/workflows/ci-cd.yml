@@ -27,4 +27,4 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Ktor fat JAR
-        run: ./gradlew clean shadowJar
+        run: ./gradlew clean jar
