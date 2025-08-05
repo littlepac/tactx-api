@@ -10,6 +10,7 @@ COPY build.gradle.kts .
 COPY settings.gradle.kts .
 COPY src src
 
+RUN chmod +x ./gradlew
 RUN ./gradlew clean jar --no-daemon
 COPY build/libs/*.jar app.jar
 
