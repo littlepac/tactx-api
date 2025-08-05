@@ -4,7 +4,13 @@ FROM openjdk:17-jdk-slim
 # Set working directory in container
 WORKDIR /app
 
-# Copy fat jar into container
+COPY gradle gradle
+COPY gradlew .
+COPY build.gradle.kts .
+COPY settings.gradle.kts .
+COPY src src
+
+RUN ./gradlew clean jar --no-daemon
 COPY build/libs/*.jar app.jar
 
 # Expose port 8080
