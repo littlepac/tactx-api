@@ -55,19 +55,19 @@ export default function App() {
             updateUsername(newUsername).then(setUsername)
         }
     };
+
     const cookie = Cookies.get('hundred_bucks_session');
         useEffect(() => {
             getMainView().then(async mainView => {
                 setMainView(mainView)
                 if (cookie) {
-                    await Promise.all([getUserDetail().then((user) => {
+                    Promise.all([getUserDetail().then((user) => {
                         if (user) {
                             setUsername(user.userName);
                             setBalance(user.currentAccountBalance)
                             setIsAuthenticated(true)
                         }
-                    }), getUserPick(mainView.tradeDate).then(setUserPick)])
-                    setLoadingView(false)
+                    }), getUserPick(mainView.tradeDate).then(setUserPick)]).finally(() => setLoadingView(false))
                 } else {
                     setLoadingView(false)
                 }
