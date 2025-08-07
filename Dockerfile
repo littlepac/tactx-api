@@ -1,7 +1,6 @@
-# Use OpenJDK 17 slim base image
+# Stage 1: Build
 FROM openjdk:17-jdk-slim AS build
 
-# Set working directory in container
 WORKDIR /app
 
 COPY gradle gradle
@@ -12,10 +11,14 @@ COPY src src
 
 RUN chmod +x ./gradlew
 RUN ./gradlew clean jar --no-daemon
+
+# Stage 2: Runtime
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Expose port 8080
 EXPOSE 8080
 
-# Run the jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
