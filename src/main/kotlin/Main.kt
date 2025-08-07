@@ -27,29 +27,18 @@ import java.security.KeyStore
 import java.time.LocalDate
 
 fun main() {
-    val keyStore = KeyStore.getInstance("JKS").apply {
-        val resourceStream = object {}.javaClass.classLoader.getResourceAsStream("keystore.jks")
-            ?: throw RuntimeException("Keystore not found")
-        load(resourceStream, "passw0rd".toCharArray()) // your keystore password
-    }
+//    val keyStore = KeyStore.getInstance("JKS").apply {
+//        val resourceStream = object {}.javaClass.classLoader.getResourceAsStream("keystore.jks")
+//            ?: throw RuntimeException("Keystore not found")
+//        load(resourceStream, "passw0rd".toCharArray()) // your keystore password
+//    }
 
     embeddedServer(
         Netty,
-        environment = applicationEngineEnvironment {
-            module {
-                // Your module code (same as your current code)
-                module()
-            }
-            sslConnector(
-                keyStore = keyStore,
-                keyAlias = "tactx-ssl",
-                keyStorePassword = { "passw0rd".toCharArray() }, // keystore password
-                privateKeyPassword = { "passw0rd".toCharArray() }) {
-                host = "localhost"
-                port = 8443 // Standard HTTPS port
-            }
-        }   // key password you chose during generation
-    ).start(wait = true)
+        port = 8080
+    ) {
+        module()
+    }.start(wait = true)
 }
 
 fun Application.module() {
