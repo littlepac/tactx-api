@@ -21,6 +21,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:${ktorVersion}")
+    implementation("io.ktor:ktor-server-call-logging:${ktorVersion}")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("io.insert-koin:koin-ktor:$koinVersion")
@@ -31,7 +32,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
     implementation("org.jetbrains.exposed:exposed-java-time:0.41.1")
     implementation("org.postgresql:postgresql:42.5.1")
-
+    implementation("ch.qos.logback:logback-classic:1.2.11")
 }
 
 configurations.all {

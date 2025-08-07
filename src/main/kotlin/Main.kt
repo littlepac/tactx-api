@@ -6,6 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
@@ -15,24 +16,12 @@ import org.example.login.verifyIdToken
 import org.example.model.http.User
 import org.example.model.http.UserDetails
 import org.example.repository.TradingSessionRepository
-import org.example.service.StockService
-import org.example.service.UserBalanceService
-import org.example.service.UserPickService
-import org.example.service.UserService
-import org.example.service.UserSessionService
+import org.example.service.*
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
-import org.koin.logger.slf4jLogger
-import java.security.KeyStore
 import java.time.LocalDate
 
 fun main() {
-//    val keyStore = KeyStore.getInstance("JKS").apply {
-//        val resourceStream = object {}.javaClass.classLoader.getResourceAsStream("keystore.jks")
-//            ?: throw RuntimeException("Keystore not found")
-//        load(resourceStream, "passw0rd".toCharArray()) // your keystore password
-//    }
-
     embeddedServer(
         Netty,
         port = 8080
@@ -42,11 +31,13 @@ fun main() {
 }
 
 fun Application.module() {
+    install(CallLogging) {
+        level = org.slf4j.event.Level.INFO
+    }
     install(ContentNegotiation) {
         json()
     }
     install(Koin) {
-        slf4jLogger()
         modules(appModule)
     }
     install(CORS) {
@@ -78,7 +69,10 @@ fun Application.module() {
 
         route("/api") {
 
-            suspend fun withUserSessionCheck(call: ApplicationCall, followup: suspend (call: ApplicationCall, user: User) -> Unit) {
+            suspend fun withUserSessionCheck(
+                call: ApplicationCall,
+                followup: suspend (call: ApplicationCall, user: User) -> Unit
+            ) {
                 val sessionToken = call.request.cookies["hundred_bucks_session"]
                 val user = sessionToken?.let {
                     userSessionService.getUserBySession(sessionToken)
@@ -102,7 +96,7 @@ fun Application.module() {
                 }
             }
 
-            put("/user/rename"){
+            put("/user/rename") {
                 withUserSessionCheck(call) { call, user ->
                     call.respond(userService.updateUsername(user.userId, call.request.queryParameters["to"]!!))
                 }

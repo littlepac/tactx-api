@@ -5,8 +5,6 @@ import org.example.model.http.Stock
 import org.example.repository.PickRepository
 import org.example.repository.StockRepository
 import org.example.repository.TradingSessionRepository
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 class StockService(
     private val tradingSessionRepository: TradingSessionRepository,
