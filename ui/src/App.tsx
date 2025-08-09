@@ -74,10 +74,14 @@ export default function App() {
             });
     }, []);
 
+    if (loadingView) {
+        return <div>Loading, please wait</div>
+    }
+
     return (
         <>
             <GoogleOAuthProvider clientId={clientId}>
-                {currentView === 'game' && !loadingView && (
+                {currentView === 'game' && (
                     <StockGame
                         balance={balance}
                         onShowLeaderboard={showLeaderboard}
