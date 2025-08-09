@@ -146,7 +146,11 @@ fun Application.module() {
             }
 
             get("/stocks/current") {
-                call.respond(stockService.getDayStockView())
+                try {
+                    call.respond(stockService.getDayStockView())
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, e.toString())
+                }
             }
 
             post("/auth/google") {
