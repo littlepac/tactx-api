@@ -25,7 +25,7 @@ import org.koin.dsl.module
 val appModule = module {
     single<Database> {
         Database.connect(
-            "jdbc:postgresql://localhost:5432/dbname?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=hundred-bucks-467005:us-central1:hundred-bucks-dev",
+            "jdbc:postgresql://localhost:5432/postgres?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=hundred-bucks-467005:us-central1:hundred-bucks-dev",
             driver = "org.postgresql.Driver",
             user = "postgres",
             password = "100Bucks$"
