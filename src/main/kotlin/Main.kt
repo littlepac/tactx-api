@@ -154,20 +154,28 @@ fun Application.module() {
             }
 
             post("/auth/google") {
+                call.application.environment.log.info("yoyo 1")
                 val payload = call.receive<Map<String, String>>()
                 val idToken = payload["googleOauthCredential"] ?: return@post call.respond(HttpStatusCode.BadRequest)
 
+                call.application.environment.log.info("yoyo 2")
                 val verifiedPayload = verifyIdToken(idToken)
+                call.application.environment.log.info("yoyo 3")
                 if (verifiedPayload == null) {
                     return@post call.respond(HttpStatusCode.Unauthorized, "Invalid ID token")
                 }
 
+                call.application.environment.log.info("yoyo 4")
                 val email = verifiedPayload.email
                 if (email == null) {
                     return@post call.respond(HttpStatusCode.BadRequest, "Email not found in ID token")
                 }
 
+                call.application.environment.log.info("yoyo 5")
+
                 val sessionToken = userSessionService.loginUser(email);
+
+                call.application.environment.log.info("yoyo 6")
                 call.response.cookies.append(
                     Cookie(
                         name = "hundred_bucks_session",
@@ -179,6 +187,7 @@ fun Application.module() {
                     )
                 )
 
+                call.application.environment.log.info("yoyo 7")
                 call.respond(HttpStatusCode.OK, mapOf("message" to "Logged in"))
             }
         }
