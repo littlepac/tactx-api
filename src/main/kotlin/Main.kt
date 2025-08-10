@@ -9,6 +9,7 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.forwardedheaders.ForwardedHeaders
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -40,6 +41,7 @@ fun Application.module() {
     install(Koin) {
         modules(appModule)
     }
+    install(ForwardedHeaders)
     install(CORS) {
         allowHost("localhost:3000")
         allowHost("tactx-api-61597259690.us-central1.run.app", listOf("https"))
