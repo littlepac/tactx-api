@@ -42,7 +42,7 @@ fun Application.module() {
     }
     install(CORS) {
         allowHost("localhost:3000")
-        allowHost("tactx-api-61597259690.us-central1.run.app")
+        allowHost("tactx-api-61597259690.us-central1.run.app", listOf("https"))
         allowCredentials = true  // if you need to send cookies/auth headers
         allowNonSimpleContentTypes = true
 
