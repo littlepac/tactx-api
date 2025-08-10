@@ -154,32 +154,36 @@ fun Application.module() {
             }
 
             post("/auth/google") {
-                val payload = call.receive<Map<String, String>>()
-                val idToken = payload["googleOauthCredential"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+                try {
+                    val payload = call.receive<Map<String, String>>()
+                    val idToken = payload["googleOauthCredential"] ?: return@post call.respond(HttpStatusCode.BadRequest)
 
-                val verifiedPayload = verifyIdToken(idToken)
-                if (verifiedPayload == null) {
-                    return@post call.respond(HttpStatusCode.Unauthorized, "Invalid ID token")
-                }
+                    val verifiedPayload = verifyIdToken(idToken)
+                    if (verifiedPayload == null) {
+                        return@post call.respond(HttpStatusCode.Unauthorized, "Invalid ID token")
+                    }
 
-                val email = verifiedPayload.email
-                if (email == null) {
-                    return@post call.respond(HttpStatusCode.BadRequest, "Email not found in ID token")
-                }
+                    val email = verifiedPayload.email
+                    if (email == null) {
+                        return@post call.respond(HttpStatusCode.BadRequest, "Email not found in ID token")
+                    }
 
-                val sessionToken = userSessionService.loginUser(email);
-                call.response.cookies.append(
-                    Cookie(
-                        name = "hundred_bucks_session",
-                        value = sessionToken,
-                        httpOnly = false,
-                        secure = true,
-                        maxAge = 60 * 60 * 24 * 365 * 10,  // 10 years
-                        path = "/",
+                    val sessionToken = userSessionService.loginUser(email);
+                    call.response.cookies.append(
+                        Cookie(
+                            name = "hundred_bucks_session",
+                            value = sessionToken,
+                            httpOnly = false,
+                            secure = true,
+                            maxAge = 60 * 60 * 24 * 365 * 10,  // 10 years
+                            path = "/",
+                        )
                     )
-                )
 
-                call.respond(HttpStatusCode.OK, mapOf("message" to "Logged in"))
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Logged in"))
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, e.toString())
+                }
             }
         }
 
