@@ -1,4 +1,4 @@
-import {DayStocksView, UserDetails, UserPick} from "./models";
+import {DayStocksView, LeaderBoard, UserDetails, UserPick} from "./models";
 
 const url = "https://tactx-api-61597259690.us-central1.run.app";
 
@@ -48,7 +48,6 @@ export const getUserDetail = (): Promise<UserDetails | null> => {
 };
 
 export const setPick = (tradeDate: string, pickId: number | null): Promise<UserPick> => {
-    console.log(tradeDate)
     return fetch(`${url}/api/pick/${tradeDate}/${pickId}`, {
         method: 'PUT',
         credentials: 'include',
@@ -60,4 +59,12 @@ export const removePick = (tradeDate: string): Promise<UserPick> => {
         method: 'DELETE',
         credentials: 'include',
     }).then(response => response.json())
+};
+
+export const getLeaderBoard = () : Promise<LeaderBoard> => {
+    return fetch(`${url}/api/leaderboard`, {
+        method: 'GET',
+        credentials: 'include',
+    }).then(response =>
+        response.json()).then(((payload: LeaderBoard) => payload))
 };

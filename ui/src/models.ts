@@ -14,6 +14,17 @@ export interface DayStocksView {
     tradeable: boolean
 }
 
+export interface LeaderBoard {
+    top10: [LeaderBoardUser]
+}
+
+export interface LeaderBoardUser {
+    userName: string,
+    currentBalance: number
+    lastTradedTicker: string | null
+    lastIncrement: number
+}
+
 export interface UserDetails {
     userName: string,
     currentAccountBalance: number

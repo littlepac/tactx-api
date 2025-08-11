@@ -8,4 +8,4 @@ data class LeaderBoard(
 )
 
 @Serializable
-data class LeaderBoardUser(val username: String, val currentBalance: Double, val lastTradedTicker: String?, val lastIncrement: Double)
+data class LeaderBoardUser(val userName: String, val currentBalance: Double, val lastTradedTicker: String?, val lastIncrement: Double)
