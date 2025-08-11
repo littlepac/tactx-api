@@ -6,47 +6,6 @@ import {Trophy, Settings, RotateCcw, Check} from 'lucide-react';
 import { HundredBucksLogo } from './HundredBucksLogo';
 import {DayStocksView, Stock, UserPick} from "../models";
 
-
-// Mock stock data - in real app this would come from your server
-// const mockStocks: Stock[] = [
-//     {
-//         id: '1',
-//         symbol: 'AAPL',
-//         name: 'Apple Inc.',
-//         price: 182.45,
-//         change: 2.34,
-//         changePercent: 1.3,
-//         reason: 'Top performer yesterday'
-//     },
-//     {
-//         id: '2',
-//         symbol: 'GOOGL',
-//         name: 'Alphabet Inc.',
-//         price: 139.67,
-//         change: -1.23,
-//         changePercent: -0.87,
-//         reason: 'Largest volume spike'
-//     },
-//     {
-//         id: '3',
-//         symbol: 'TSLA',
-//         name: 'Tesla Inc.',
-//         price: 248.92,
-//         change: 5.67,
-//         changePercent: 2.33,
-//         reason: 'Biggest mover today'
-//     },
-//     {
-//         id: '4',
-//         symbol: 'NVDA',
-//         name: 'NVIDIA Corp.',
-//         price: 421.38,
-//         change: -3.45,
-//         changePercent: -0.81,
-//         reason: 'Most discussed stock'
-//     }
-// ];
-
 interface StockGameProps {
     balance: number;
     onShowLeaderboard: () => void;

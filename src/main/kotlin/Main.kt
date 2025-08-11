@@ -78,7 +78,7 @@ fun Application.module() {
                 val sessionToken = call.request.cookies["hundred_bucks_session"]
                 val user = sessionToken?.let {
                     userSessionService.getUserBySession(sessionToken)
-                } ?: userService.getUserByEmail("tkpc071083@gmail.com")
+                }
                 if (user != null) {
                     followup(call, user);
                 } else {
@@ -148,11 +148,7 @@ fun Application.module() {
             }
 
             get("/stocks/current") {
-                try {
-                    call.respond(stockService.getDayStockView())
-                } catch (e: Exception) {
-                    call.respond(HttpStatusCode.InternalServerError, e.toString())
-                }
+                call.respond(stockService.getDayStockView())
             }
 
             post("/auth/google") {
