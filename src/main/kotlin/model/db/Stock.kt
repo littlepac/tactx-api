@@ -8,4 +8,6 @@ data class Stock(
     val previousOpen: BigDecimal,
     val previousClose: BigDecimal,
     val pickReason: String,
+    val finalOpen: BigDecimal?,
+    val finalClose: BigDecimal?,
 )

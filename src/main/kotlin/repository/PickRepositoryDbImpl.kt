@@ -21,7 +21,7 @@ class PickRepositoryDbImpl(private val db: Database) : PickRepository {
         val finalClose = decimal("final_close", 10, 4).nullable()
     }
 
-    override suspend fun getCurrentStocks(tradeDate: LocalDate): List<Stock> = newSuspendedTransaction(db = db) {
+    override suspend fun getStocks(tradeDate: LocalDate): List<Stock> = newSuspendedTransaction(db = db) {
         PickTable.select { PickTable.tradeDate eq tradeDate }
             .map { row ->
                 Stock(
@@ -29,8 +29,11 @@ class PickRepositoryDbImpl(private val db: Database) : PickRepository {
                     ticker = row[PickTable.ticker],
                     previousOpen = row[PickTable.previousOpen],
                     previousClose = row[PickTable.previousClose],
-                    pickReason = row[PickTable.pickReason]
+                    pickReason = row[PickTable.pickReason],
+                    finalOpen = row[PickTable.finalOpen],
+                    finalClose = row[PickTable.finalClose],
                 )
             }
     }
+
 }

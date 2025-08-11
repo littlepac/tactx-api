@@ -4,4 +4,5 @@ import org.example.model.db.TradingSession
 
 interface TradingSessionRepository {
     suspend fun getCurrentTradingSession(): TradingSession
+    suspend fun getPreviousTradeDate(): TradingSession?
 }

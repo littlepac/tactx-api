@@ -5,6 +5,7 @@ import org.example.model.http.Stock
 import org.example.repository.PickRepository
 import org.example.repository.StockRepository
 import org.example.repository.TradingSessionRepository
+import java.time.LocalDate
 
 class StockService(
     private val tradingSessionRepository: TradingSessionRepository,
@@ -13,8 +14,8 @@ class StockService(
 ) {
     suspend fun getDayStockView(): DayStocksView {
         val currentSession = tradingSessionRepository.getCurrentTradingSession()
-        val date = currentSession.currentTradeDate
-        val stocks = pickRepository.getCurrentStocks(date)
+        val date = currentSession.tradeDate
+        val stocks = pickRepository.getStocks(date)
         return DayStocksView(
             date.toString(),
             stocks.map { stock ->
@@ -29,5 +30,9 @@ class StockService(
             },
             currentSession.tradeable
         )
+    }
+
+    suspend fun getStocks(tradeDate: LocalDate): List<org.example.model.db.Stock> {
+        return pickRepository.getStocks(tradeDate);
     }
 }

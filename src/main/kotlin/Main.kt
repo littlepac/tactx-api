@@ -14,6 +14,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.example.login.verifyIdToken
+import org.example.model.http.LeaderBoard
+import org.example.model.http.LeaderBoardUser
 import org.example.model.http.User
 import org.example.model.http.UserDetails
 import org.example.repository.TradingSessionRepository
@@ -98,6 +100,27 @@ fun Application.module() {
                 }
             }
 
+            get("/leaderboard") {
+                val previousTradeDate = tradingSessionRepository.getPreviousTradeDate()
+                val previousStocks = previousTradeDate?.let { stockService.getStocks(it.tradeDate) }?.associateBy { it.id }
+                val top10LeaderBoardUsers = userBalanceService.getCurrentTopUserBalances(10).map { userBalance ->
+                    val userId = userBalance.userId.toString();
+                    val user = userService.getUserById(userId)!!
+                    val previousPick = previousTradeDate?.let{ previousDate -> userPickService.getUserPick(userId, previousDate.tradeDate)}
+                    LeaderBoardUser(
+                        user.userName,
+                        userBalance.balance.toDouble(),
+                        previousPick?.let { pick -> previousStocks!![pick.pickId]!!.ticker },
+                        previousTradeDate?.let { previousDate -> userBalanceService.getHistoricUserBalance(userId, previousDate.tradeDate) }?.let
+                        {
+                            previousBalance ->
+                            userBalance.balance.minus(previousBalance.balance)
+                        }?.toDouble() ?: 0.00
+                    )
+                }
+                call.respond(LeaderBoard(top10LeaderBoardUsers))
+            }
+
             put("/user/rename") {
                 withUserSessionCheck(call) { call, user ->
                     call.respond(userService.updateUsername(user.userId, call.request.queryParameters["to"]!!))
@@ -115,7 +138,7 @@ fun Application.module() {
                 withUserSessionCheck(call) { call, user ->
                     val tradeDate = LocalDate.parse(call.parameters["tradeDate"]);
                     val currentSession = tradingSessionRepository.getCurrentTradingSession();
-                    if (currentSession.currentTradeDate == tradeDate && currentSession.tradeable) {
+                    if (currentSession.tradeDate == tradeDate && currentSession.tradeable) {
                         call.respondNullable(
                             userPickService.updateUserPick(
                                 user.userId,
@@ -133,7 +156,7 @@ fun Application.module() {
                 val tradeDate = LocalDate.parse(call.parameters["tradeDate"]);
                 val currentSession = tradingSessionRepository.getCurrentTradingSession();
                 withUserSessionCheck(call) { call, user ->
-                    if (currentSession.currentTradeDate == tradeDate && currentSession.tradeable) {
+                    if (currentSession.tradeDate == tradeDate && currentSession.tradeable) {
                         call.respondNullable(
                             userPickService.updateUserPick(
                                 user.userId,

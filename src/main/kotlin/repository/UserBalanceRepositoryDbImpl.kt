@@ -1,12 +1,8 @@
 package org.example.repository
 
 import org.example.model.db.UserBalance
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.date
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -34,16 +30,31 @@ class UserBalanceRepositoryDbImpl(private val db: Database) : UserBalanceReposit
         }
     }
 
-    override suspend fun getCurrentBalance(userId: String, tradeDate: LocalDate): UserBalance = newSuspendedTransaction(db = db) {
+    override suspend fun findBalanceByDate(userId: String, tradeDate: LocalDate): UserBalance? = newSuspendedTransaction(db = db) {
         val uuidUserId = UUID.fromString(userId)
         newSuspendedTransaction(db = db) {
             UserBalanceTable.select { (UserBalanceTable.userId eq uuidUserId) and (UserBalanceTable.forTradeDate eq tradeDate)}.map {
                 UserBalance(
+                    it[UserBalanceTable.userId],
                     it[UserBalanceTable.forTradeDate],
                     it[UserBalanceTable.balance]
                 )
-            }.singleOrNull() ?: throw NoSuchElementException("No balance found for userId: $userId")
+            }.singleOrNull()
         }
+    }
+
+    override suspend fun getTopUserBalances(tradeDate: LocalDate, limit: Int): List<UserBalance> = newSuspendedTransaction(db = db) {
+        UserBalanceTable
+            .select { UserBalanceTable.forTradeDate eq tradeDate}
+            .orderBy(UserBalanceTable.balance, SortOrder.DESC)
+            .limit(limit)
+            .map {
+                UserBalance(
+                    it[UserBalanceTable.userId],
+                    it[UserBalanceTable.forTradeDate],
+                    it[UserBalanceTable.balance]
+                )
+            }
     }
 
 }
