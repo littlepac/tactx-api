@@ -100,6 +100,7 @@ CREATE TABLE user_balance (
     FOREIGN KEY (for_trade_date) REFERENCES trading_sessions(trade_date)
 );
 
+ALTER TABLE user_balance ADD COLUMN prev_eod_balance NUMERIC(15,4) NULL;
 
 INSERT into stocks (ticker, name) values ('NVDA','NVIDIA');
 INSERT into stocks (ticker, name) values ('MSFT','Microsoft');
