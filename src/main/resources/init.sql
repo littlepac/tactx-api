@@ -1,6 +1,7 @@
 DROP table user_balance;
 DROP table resets;
 DROP table user_picks;
+DROP table items;
 DROP table picks;
 DROP table stocks;
 DROP table leaderboard_users;
@@ -100,7 +101,22 @@ CREATE TABLE user_balance (
     FOREIGN KEY (for_trade_date) REFERENCES trading_sessions(trade_date)
 );
 
+CREATE TABLE items(
+    item_id     INT          NOT NULL,
+    name        VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    PRIMARY KEY (item_id)
+);
+
 ALTER TABLE user_balance ADD COLUMN prev_eod_balance NUMERIC(15,4) NULL;
+
+ALTER TABLE user_balance ADD COLUMN item_0 INT NOT NULL DEFAULT 1;
+ALTER TABLE user_balance ADD COLUMN item_1 INT NOT NULL DEFAULT 1;
+ALTER TABLE user_balance ADD COLUMN item_2 INT NOT NULL DEFAULT 1;
+
+ALTER TABLE user_picks ADD COLUMN item_id INT NULL;
+
+ALTER TABLE user_picks ADD CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES items(item_id);
 
 INSERT into stocks (ticker, name) values ('NVDA','NVIDIA');
 INSERT into stocks (ticker, name) values ('MSFT','Microsoft');
@@ -208,3 +224,7 @@ INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, p
 INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 1, 'TSLA', 1, 2, 'The 2nd best stock');
 INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 2, 'AAPL', 1, 2, 'The 3rd best stock');
 INSERT INTO picks (trade_date, pick_id, ticker, previous_open, previous_close, pick_reason) values ('2025-07-29', 3, 'GOOG', 1, 2, 'The 4th best stock');
+
+INSERT INTO items (item_id, name, description) values (0, '$1 Bond','By skipping investment today you receive $1');
+INSERT INTO items (item_id, name, description) values (1, 'Short it!','You are shorting selling your investment pick today');
+INSERT INTO items (item_id, name, description) values (2, '3X','You are investing with a 3x leverage today');

@@ -37,6 +37,13 @@ val appModule = module {
 //            user = "postgres",
 //            password = "100Bucks$"
 //        )
+
+//        Database.connect(
+//            url = "jdbc:postgresql://localhost:5432/postgres",
+//            driver = "org.postgresql.Driver",
+//            user = "postgres",
+//            password = "postgres"
+//        )
     }
     single<UserRepository> { UserRepositoryDbImpl(get()) }
     single<UserSessionRepository> { UserSessionRepositoryDbImpl(get()) }

@@ -1,6 +1,7 @@
 import {DayStocksView, LeaderBoard, UserDetails, UserPick} from "./models";
 
 const url = "https://tactx-api-61597259690.us-central1.run.app";
+// const url = "http://localhost:8080";
 
 export const login = (credential: string | undefined, onSuccess: () => void) => {
     fetch(`${url}/api/auth/google`, {
