@@ -1,5 +1,7 @@
 package org.example
 
+import org.example.repository.PickCommentsRepository
+import org.example.repository.PickCommentsRepositoryDbImpl
 import org.example.repository.PickRepository
 import org.example.repository.PickRepositoryDbImpl
 import org.example.repository.StockRepository
@@ -52,9 +54,10 @@ val appModule = module {
     single<UserBalanceRepository> { UserBalanceRepositoryDbImpl(get()) }
     single<TradingSessionRepository> { TradingSessionRepositoryDbImpl(get()) }
     single<StockRepository> { StockRepositoryDbImpl(get()) }
+    single<PickCommentsRepository> { PickCommentsRepositoryDbImpl(get()) }
     single { UserService(get(), get()) }
     single { UserSessionService(get(), get()) }
-    single { StockService(get(), get(), get()) }
+    single { StockService(get(), get(), get(), get()) }
     single { UserPickService(get()) }
     single { UserBalanceService(get(),get()) }
 

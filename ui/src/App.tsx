@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import {DayStocksView, Stock, UserPick} from "./models";
 import {getMainView, getUserDetail, getUserPick, login, removePick, setPick, updateUsername} from './api';
 import {GoogleOAuthProvider} from "@react-oauth/google";
+import {StockSelectionModal} from "./components/StockCommentModal";
 
 const clientId = "636074117081-gfhjtuf0ie9fes2a1tdug4afsumd3j2m.apps.googleusercontent.com";
 
@@ -25,6 +26,8 @@ export default function App() {
     const [balance, setBalance] = useState<number>(100);
     const [userPick, setUserPick] = useState<UserPick | null>(null);
     const [mainView, setMainView] = useState<DayStocksView | null>(null);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [modalShown, setModalShown] = useState<boolean>(false);
     const [loadingView, setLoadingView] = useState<boolean>(true);
 
     const showGame = () => {
@@ -82,6 +85,7 @@ export default function App() {
         <>
             <GoogleOAuthProvider clientId={clientId}>
                 {currentView === 'game' && (
+                    <>
                     <StockGame
                         balance={balance}
                         onShowLeaderboard={showLeaderboard}
@@ -91,9 +95,27 @@ export default function App() {
                         username={username}
                         mainView={mainView}
                         userPick={userPick}
-                        onSelectPick={(tradeDate, pickId) => setPick(tradeDate, pickId).then(setUserPick).catch((e) => console.log(e))}
-                        onRemovePick={(tradeDate) => removePick(tradeDate).then(setUserPick).catch((e) => console.log(e))}
+                        onSelectPick={(tradeDate, pickId) => setPick(tradeDate, pickId).then((userPick) => {
+                            setUserPick(userPick)
+                            if (!modalShown) {
+                                setModalOpen(true)
+                                setModalShown(true)
+                            }
+                        }).catch((e) => console.log(e))}
+                        onRemovePick={(tradeDate) => removePick(tradeDate).then((userPick) => {
+                            setUserPick(userPick)
+                            if (!modalShown) {
+                                setModalOpen(true)
+                                setModalShown(true)
+                            }
+                        }).catch((e) => console.log(e))}
                     />
+                        <StockSelectionModal
+                            isOpen={modalOpen}
+                            onClose={() => setModalOpen(false)}
+                            comment={mainView?.comments?.find(it => it.id === userPick?.pickId)?.comment}
+                        />
+                    </>
                 )}
                 {currentView === 'leaderboard' && (
                     <Leaderboard onBack={showGame}/>

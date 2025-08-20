@@ -12,6 +12,12 @@ export interface DayStocksView {
     stocks: [Stock],
     tradeDate: string
     tradeable: boolean
+    comments: [Comment]
+}
+
+export interface Comment {
+    id: number | null,
+    comment: string | null
 }
 
 export interface LeaderBoard {

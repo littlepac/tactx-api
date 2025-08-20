@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Card } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import {Trophy, Settings, RotateCcw, Check} from 'lucide-react';
-import { HundredBucksLogo } from './HundredBucksLogo';
-import {DayStocksView, Stock, UserPick} from "../models";
+import React from 'react';
+import {Card} from './ui/card';
+import {Button} from './ui/button';
+import {Badge} from './ui/badge';
+import {Check, Settings, Trophy} from 'lucide-react';
+import {HundredBucksLogo} from './HundredBucksLogo';
+import {DayStocksView, UserPick} from "../models";
 
 interface StockGameProps {
     balance: number;

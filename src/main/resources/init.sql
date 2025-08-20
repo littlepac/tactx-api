@@ -118,6 +118,14 @@ ALTER TABLE user_picks ADD COLUMN item_id INT NULL;
 
 ALTER TABLE user_picks ADD CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES items(item_id);
 
+CREATE TABLE pick_comments
+(
+    trade_date DATE NOT NULL,
+    pick_id    INT NULL,
+    comment    TEXT,
+    FOREIGN KEY (trade_date, pick_id) REFERENCES picks (trade_date, pick_id)
+);
+
 INSERT into stocks (ticker, name) values ('NVDA','NVIDIA');
 INSERT into stocks (ticker, name) values ('MSFT','Microsoft');
 INSERT into stocks (ticker, name) values ('AAPL','Apple');
