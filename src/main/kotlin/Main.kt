@@ -102,18 +102,28 @@ fun Application.module() {
 
             get("/leaderboard") {
                 val previousTradeDate = tradingSessionRepository.getPreviousTradeDate()
-                val previousStocks = previousTradeDate?.let { stockService.getStocks(it.tradeDate) }?.associateBy { it.id }
+                val previousStocks =
+                    previousTradeDate?.let { stockService.getStocks(it.tradeDate) }?.associateBy { it.id }
                 val top10LeaderBoardUsers = userBalanceService.getCurrentTopUserBalances(10).map { userBalance ->
                     val userId = userBalance.userId.toString();
                     val user = userService.getUserById(userId)!!
-                    val previousPick = previousTradeDate?.let{ previousDate -> userPickService.getUserPick(userId, previousDate.tradeDate)}
+                    val previousPick = previousTradeDate?.let { previousDate ->
+                        userPickService.getUserPick(
+                            userId,
+                            previousDate.tradeDate
+                        )
+                    }
                     LeaderBoardUser(
                         user.userName,
                         userBalance.balance.toDouble(),
-                        previousPick?.let { pick -> previousStocks!![pick.pickId]!!.ticker },
-                        previousTradeDate?.let { previousDate -> userBalanceService.getHistoricUserBalance(userId, previousDate.tradeDate) }?.let
-                        {
-                            previousBalance ->
+                        previousPick?.pickId?.let { pick -> previousStocks!![pick]!!.ticker },
+                        previousTradeDate?.let { previousDate ->
+                            userBalanceService.getHistoricUserBalance(
+                                userId,
+                                previousDate.tradeDate
+                            )
+                        }?.let
+                        { previousBalance ->
                             userBalance.balance.minus(previousBalance.balance)
                         }?.toDouble() ?: 0.00
                     )
