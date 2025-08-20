@@ -70,7 +70,12 @@ export default function App() {
                             setBalance(user.currentAccountBalance)
                             setIsAuthenticated(true)
                         }
-                    }), getUserPick(mainView.tradeDate).then(setUserPick)]).finally(() => setLoadingView(false))
+                    }), getUserPick(mainView.tradeDate).then((userPick) => {
+                        setUserPick(userPick)
+                        if (userPick) {
+                            setModalShown(true)
+                        }
+                    })]).finally(() => setLoadingView(false))
                 } else {
                     setLoadingView(false)
                 }
