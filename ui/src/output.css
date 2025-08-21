@@ -1003,9 +1003,9 @@
   }
   .bg-primary\/20 {
     background-color: var(--primary);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--primary) 20%, transparent);
-    }
+    /*@supports (color: color-mix(in lab, red, red)) {*/
+    /*  background-color: color-mix(in oklab, var(--primary) 20%, transparent);*/
+    /*}*/
   }
   .bg-secondary {
     background-color: var(--secondary);
