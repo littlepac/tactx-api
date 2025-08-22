@@ -1,3 +1,5 @@
+DROP table stock_prices;
+DROP table pick_comments;
 DROP table user_balance;
 DROP table resets;
 DROP table user_picks;
@@ -124,6 +126,16 @@ CREATE TABLE pick_comments
     pick_id    INT NULL,
     comment    TEXT,
     FOREIGN KEY (trade_date, pick_id) REFERENCES picks (trade_date, pick_id)
+);
+
+CREATE TABLE stock_prices
+(
+    trade_date DATE NOT NULL,
+    ticker VARCHAR(10) NOT NULL,
+    open  NUMERIC(10, 4) NOT NULL,
+    close NUMERIC(10, 4) NOT NULL,
+    PRIMARY KEY (trade_date, ticker),
+    FOREIGN KEY (ticker) REFERENCES stocks(ticker)
 );
 
 INSERT into stocks (ticker, name) values ('NVDA','NVIDIA');
